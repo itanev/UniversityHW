@@ -96,5 +96,8 @@ int main()
     }
     else
         cout << "Something went wrong!";
+
+    delete[] oneBytes;
+    delete[] sector;
     return 0;
 }
