@@ -20,6 +20,8 @@ void readData(vector<T>& dataHolder, ifstream& file)
         dataHolder.pop_back();   //delete last entry, because it has been read twice
     }
     else cout << "File can't be opened!";
+
+    file.close();
 }
 
 #endif // readFiles
