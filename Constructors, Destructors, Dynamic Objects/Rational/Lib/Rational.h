@@ -4,13 +4,13 @@
 class Rational
 {
     private:
-        //some fields
         int num;
         int denom;
 
-        //some functs
         int gcm(int a, int b) const;
         int lcm(int a, int b) const;
+        void truncate(int * n, int * d);
+        void asignValue(int * n, int * d);
     public:
         //constructors
         Rational();
@@ -28,7 +28,46 @@ class Rational
         bool isPos() const;
         double toDouble() const;
         void print() const;
-};
 
+        //operators
+        Rational operator +(Rational& number);
+        Rational operator +(int num);
+        Rational operator -(Rational& number);
+        Rational operator -();
+        Rational operator -(int num);
+        Rational operator *(Rational& number);
+        Rational operator *(int num);
+        Rational operator /(Rational& number);
+        Rational operator /(int num);
+        Rational operator +=(int num);
+        Rational operator +=(Rational& number);
+        Rational operator -=(int num);
+        Rational operator -=(Rational& number);
+        Rational operator *=(int num);
+        Rational operator *=(Rational& number);
+        Rational operator /=(int num);
+        Rational operator /=(Rational& number);
+
+        bool operator < (Rational& rat);
+        bool operator > (Rational& rat);
+        bool operator > (int num);
+        bool operator < (int num);
+        bool operator <= (Rational& rat);
+        bool operator <= (int num);
+        bool operator >= (Rational& rat);
+        bool operator >= (int num);
+        bool operator == (Rational& rat);
+        bool operator == (int num);
+        bool operator != (Rational& rat);
+        bool operator != (int num);
+
+        operator int();
+        operator float();
+        operator double();
+        operator bool();
+
+        Rational operator ^(int power);
+        Rational operator ~();
+};
 
 #endif // rational
