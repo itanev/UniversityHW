@@ -64,37 +64,7 @@ int Rational::gcm(int a, int b) const { return (b == 0) ? a : gcm(b, a%b); }
 //private least common multiple
 int Rational::lcm(int a, int b) const { return a*b /gcm(a,b); }
 
-    Rational Rational::add(Rational * number) const
-    {
-        int newDenom = lcm(denom, number->getDenom());
-        int newNum = newDenom / denom * num + newDenom / number->getDenom() * number->getNum();
-
-        Rational result(newNum, newDenom);
-        return result;
-    }
-
-    Rational Rational::subtract(Rational * number) const
-    {
-        int newDenom = lcm(denom, number->getDenom());
-        int newNum = newDenom / denom * num - newDenom / number->getDenom() * number->getNum();
-
-        Rational result(newNum, newDenom);
-        return result;
-    }
-
-    Rational Rational::multiply(Rational * number) const
-    {
-        Rational result(num * (number->getNum()), denom * (number->getDenom()));
-        return result;
-    }
-
-    Rational Rational::divide(Rational * number) const
-    {
-        Rational result(num * (number->getDenom()), denom * (number->getNum()));
-        return result;
-    }
-
-    Rational Rational::operator+(Rational& number)
+    Rational Rational::add(const Rational& number) const
     {
         int newDenom = lcm(denom, number.getDenom());
         int newNum = newDenom / denom * num + newDenom / number.getDenom() * number.getNum();
@@ -103,34 +73,7 @@ int Rational::lcm(int a, int b) const { return a*b /gcm(a,b); }
         return result;
     }
 
-    Rational Rational::operator +(int number)
-    {
-        int newNum = number * denom + num;
-
-        Rational result(newNum, denom);
-        return result;
-    }
-
-    static Rational operator+(int number, Rational& rat)
-    {
-        return (rat + number);
-    }
-
-    Rational Rational::operator-()
-    {
-        return opposite();
-    }
-
-    Rational Rational::operator-(int n)
-    {
-        int newDenom = denom;
-        int newNum = -1 * denom * n + num;
-
-        Rational result(newNum, newDenom);
-        return result;
-    }
-
-    Rational Rational::operator-(Rational& number)
+    Rational Rational::subtract(const Rational& number) const
     {
         int newDenom = lcm(denom, number.getDenom());
         int newNum = newDenom / denom * num - newDenom / number.getDenom() * number.getNum();
@@ -139,7 +82,49 @@ int Rational::lcm(int a, int b) const { return a*b /gcm(a,b); }
         return result;
     }
 
-    static Rational operator-(int number, Rational& rat)
+    Rational Rational::multiply(const Rational& number) const
+    {
+        Rational result(num * (number.getNum()), denom * (number.getDenom()));
+        return result;
+    }
+
+    Rational Rational::divide(const Rational& number) const
+    {
+        Rational result(num * (number.getDenom()), denom * (number.getNum()));
+        return result;
+    }
+
+    Rational Rational::operator+(const Rational& number) const
+    {
+        return add(number);
+    }
+
+    Rational Rational::operator +(int number) const
+    {
+        return add(Rational(number));
+    }
+
+    Rational operator+(int number, const Rational& rat)
+    {
+        return (rat + number);
+    }
+
+    Rational Rational::operator-() const
+    {
+        return opposite();
+    }
+
+    Rational Rational::operator-(int number) const
+    {
+        return subtract(Rational(number));
+    }
+
+    Rational Rational::operator-(const Rational& number) const
+    {
+        return subtract(number);
+    }
+
+    Rational operator-(int number, const Rational& rat)
     {
         int newDenom = rat.getDenom();
         int newNum = rat.getDenom() * number + -1 * rat.getNum();
@@ -148,42 +133,37 @@ int Rational::lcm(int a, int b) const { return a*b /gcm(a,b); }
         return result;
     }
 
-    Rational Rational::operator*(Rational& number)
+    Rational Rational::operator*(const Rational& number) const
     {
-        Rational result(num * (number.getNum()), denom * (number.getDenom()));
-        return result;
+        return multiply(number);
     }
 
-    Rational Rational::operator*(int number)
+    Rational Rational::operator*(int number) const
     {
-        Rational result(num * number, denom);
-        return result;
+        return Rational(num * number, denom);
     }
 
-    static Rational operator*(int number, Rational& rat)
+    Rational operator*(int number, const Rational& rat)
     {
         return (rat * number);
     }
 
-    Rational Rational::operator/(Rational& number)
+    Rational Rational::operator/(const Rational& number) const
     {
-        Rational result(num * (number.getDenom()), denom * (number.getNum()));
-        return result;
+        return divide(number);
     }
 
-    Rational Rational::operator/(int number)
+    Rational Rational::operator/(int number) const
     {
-        Rational result(num, denom * number);
-        return result;
+        return Rational(num, denom * number);
     }
 
-    static Rational operator/(int number, Rational& rat)
+    Rational operator/(int number, const Rational& rat)
     {
-        Rational result(number * rat.getDenom(), rat.getNum());
-        return result;
+        return Rational(number * rat.getDenom(), rat.getNum());
     }
 
-    Rational Rational::operator+=(Rational& number)
+    Rational Rational::operator+=(const Rational& number)
     {
         int newDenom = lcm(denom, number.getDenom());
         int newNum = newDenom / denom * num + newDenom / number.getDenom() * number.getNum();
@@ -199,7 +179,7 @@ int Rational::lcm(int a, int b) const { return a*b /gcm(a,b); }
         asignValue(&newNum, &newDenom);
     }
 
-    Rational Rational::operator-=(Rational& number)
+    Rational Rational::operator-=(const Rational& number)
     {
         int newDenom = lcm(denom, number.getDenom());
         int newNum = newDenom / denom * num - newDenom / number.getDenom() * number.getNum();
@@ -215,7 +195,7 @@ int Rational::lcm(int a, int b) const { return a*b /gcm(a,b); }
         asignValue(&newNum, &newDenom);
     }
 
-    Rational Rational::operator*=(Rational& number)
+    Rational Rational::operator*=(const Rational& number)
     {
         int newDenom = denom * (number.getDenom());
         int newNum = num * (number.getNum());
@@ -231,7 +211,7 @@ int Rational::lcm(int a, int b) const { return a*b /gcm(a,b); }
         asignValue(&newNum, &newDenom);
     }
 
-    Rational Rational::operator/=(Rational& number)
+    Rational Rational::operator/=(const Rational& number)
     {
         int newDenom = num * (number.getNum());
         int newNum = denom * (number.getDenom());
@@ -247,128 +227,86 @@ int Rational::lcm(int a, int b) const { return a*b /gcm(a,b); }
         asignValue(&newNum, &newDenom);
     }
 
-    bool Rational::operator < (Rational& rat)
+    bool Rational::operator < (const Rational& rat) const
     {
         if(num * rat.getDenom() >= denom * rat.getNum()) return false;
 
         return true;
     }
 
-    bool Rational::operator < (int number)
+    bool Rational::operator < (int number) const
     {
         if(num >= denom * number) return false;
 
         return true;
     }
 
-    static bool operator < (int number, Rational& rat)
-    {
-        if(rat.getNum() <= rat.getDenom() * number) return false;
-
-        return true;
-    }
-
-    bool Rational::operator > (Rational& rat)
+    bool Rational::operator > (const Rational& rat) const
     {
         if(num * rat.getDenom() <= denom * rat.getNum()) return false;
 
         return true;
     }
 
-    bool Rational::operator > (int number)
+    bool Rational::operator > (int number) const
     {
         if(num <= denom * number) return false;
 
         return true;
     }
 
-    static bool operator > (int number, Rational& rat)
-    {
-        if(rat.getNum() >= rat.getDenom() * number) return false;
-
-        return true;
-    }
-
-    bool Rational::operator <= (Rational& rat)
+    bool Rational::operator <= (const Rational& rat) const
     {
         if(num * rat.getDenom() > denom * rat.getNum()) return false;
 
         return true;
     }
 
-    bool Rational::operator <= (int number)
+    bool Rational::operator <= (int number) const
     {
         if(num > denom * number) return false;
 
         return true;
     }
 
-    static bool operator <= (int number, Rational& rat)
-    {
-        if(rat.getNum() < rat.getDenom() * number) return false;
-
-        return true;
-    }
-
-    bool Rational::operator >= (Rational& rat)
+    bool Rational::operator >= (const Rational& rat) const
     {
         if(num * rat.getDenom() < denom * rat.getNum()) return false;
 
         return true;
     }
 
-    bool Rational::operator >= (int number)
+    bool Rational::operator >= (int number) const
     {
         if(num < denom * number) return false;
 
         return true;
     }
 
-    static bool operator >= (int number, Rational& rat)
-    {
-        if(rat.getNum() > rat.getDenom() * number) return false;
-
-        return true;
-    }
-
-    bool Rational::operator == (Rational& rat)
+    bool Rational::operator == (const Rational& rat) const
     {
         if(num * rat.getDenom() != denom * rat.getNum()) return false;
 
         return true;
     }
 
-    bool Rational::operator == (int number)
+    bool Rational::operator == (int number) const
     {
         if(num != denom * number) return false;
 
         return true;
     }
 
-    static bool operator == (int number, Rational& rat)
-    {
-        if(rat.getNum() != rat.getDenom() * number) return false;
-
-        return true;
-    }
-
-    bool Rational::operator != (Rational& rat)
+    bool Rational::operator != (const Rational& rat) const
     {
         if(num * rat.getDenom() == denom * rat.getNum()) return false;
 
         return true;
     }
 
-    bool Rational::operator != (int number)
+    bool Rational::operator != (int number) const
     {
         if(num == denom * number) return false;
-
-        return true;
-    }
-
-    static bool operator != (int number, Rational& rat)
-    {
-        if(rat.getNum() == rat.getDenom() * number) return false;
 
         return true;
     }
@@ -403,12 +341,12 @@ int Rational::lcm(int a, int b) const { return a*b /gcm(a,b); }
         }
     }
 
-    Rational Rational::operator ~()
+    Rational Rational::operator ~() const
     {
         return Rational(denom, num);
     }
 
-    static ostream& operator << (ostream &out, Rational& rat)
+    ostream& operator << (ostream &out, const Rational& rat)
     {
         int num = rat.getNum();
         int denom = rat.getDenom();
