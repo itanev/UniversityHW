@@ -19,49 +19,49 @@ public:
     {
         private:
             RationalDynamicArray * currArray;
+
             int index;
 
-            Iterator(RationalDynamicArray * arr, int i)
-                : currArray(arr), index(i) { }
+            Iterator(RationalDynamicArray& arr, int i)
+                : currArray(&arr), index(i) {}
 
             friend class RationalDynamicArray;
 
         public:
             Iterator() { currArray = NULL; index = 0; }
-            ~Iterator() { delete[] currArray; }
+            Iterator(const Iterator& other) { currArray = other.currArray; index = other.index; }
+            ~Iterator() {}
 
-            RationalDynamicArray * getCurrArrayIterator() { return this->currArray + this->index; }
+            Rational& operator *() { return (*currArray)[index]; }
+            Rational * operator ->() { return &(*currArray)[index]; }
 
-            RationalDynamicArray& operator *() { return currArray[index]; }
-            RationalDynamicArray * operator ->() { return currArray + index; }
-
-            bool operator ==(Iterator& currIterator)
+            bool operator ==(const Iterator& currIterator) const
             {
-                if(currIterator.getCurrArrayIterator() == ( currArray + index ) ) return true;
-                else return false;
+                if( currArray == currIterator.currArray && index == currIterator.index) return true;
+                return false;
             }
 
-            bool operator !=(Iterator& currIterator)
+            bool operator !=(const Iterator& currIterator) const
             {
-                if(currIterator.getCurrArrayIterator() != ( currArray + index ) ) return true;
-                else return false;
+                if( !(*this == currIterator) ) return true;
+                return false;
             }
 
-            RationalDynamicArray* operator ++() { ++index; return currArray + index; }
-            RationalDynamicArray* operator --() { --index; return currArray + index; }
+            Iterator& operator ++() { ++index; return *this; }
+            Iterator& operator --() { --index; return *this; }
 
-            RationalDynamicArray* operator ++(int)
+            Iterator operator ++(int)
             {
-                int currIndex = index;
+                Iterator currIterator = *this;
                 ++index;
-                return currArray + currIndex;
+                return currIterator;
             }
 
-            RationalDynamicArray* operator --(int)
+            Iterator operator --(int)
             {
-                int currIndex = index;
+                Iterator currIterator = *this;
                 --index;
-                return currArray - currIndex;
+                return currIterator;
             }
     };
 
@@ -93,11 +93,11 @@ public:
 	void operator ()(Rational (*f)(const Rational&));
 
     Iterator begin() {
-        return Iterator(this, 0);
+        return Iterator(*this, 0);
     }
 
     Iterator end() {
-        return Iterator(this, size);
+        return Iterator(*this, size);
     }
 };
 
