@@ -4,7 +4,7 @@
 #include "Community.h"
 
 Community::Community(const char* communityName, const char* foundationDate,
-                      const Person& founder, long maxMembersCount)
+                     Person& founder, long maxMembersCount)
 {
     setName(communityName);
 
@@ -15,9 +15,9 @@ Community::Community(const char* communityName, const char* foundationDate,
     setFounder(founder);
 
     validateNumber(maxMembersCount);
-    this->maxMembersCount = maxMembersCount;
 
-    this->members = new Person[maxMembersCount];
+    this->maxMembersCount = maxMembersCount;
+   // this->members = NULL;
 }
 
 Community::Community(const Community& anotherCommunity)
@@ -27,7 +27,9 @@ Community::Community(const Community& anotherCommunity)
 
 Community& Community::operator=(const Community& anotherCommunity)
 {
-    swapFields(anotherCommunity);
+    if(this != &anotherCommunity)
+        swapFields(anotherCommunity);
+
     return *this;
 }
 
@@ -51,8 +53,13 @@ void Community::validatePeople(const Person* setOfPeople) const
 
 void Community::swapFields(const Community& anotherCommunity)
 {
-    this->communityName = anotherCommunity.communityName;
-    this->foundationDate = anotherCommunity.foundationDate;
+    this->communityName = new char[strlen(anotherCommunity.communityName) + 1];
+    strcpy(this->communityName, anotherCommunity.communityName);
+
+    this->foundationDate = new char[strlen(anotherCommunity.foundationDate) + 1];
+    strcpy(this->foundationDate, anotherCommunity.foundationDate);
+   // this->communityName = anotherCommunity.communityName;
+    //this->foundationDate = anotherCommunity.foundationDate;
     this->founder = anotherCommunity.founder;
     this->maxMembersCount = anotherCommunity.maxMembersCount;
     this->membersCount = anotherCommunity.membersCount;
@@ -71,7 +78,7 @@ char* Community::getFoundationDate() const
 
 Person Community::getFounder() const
 {
-    return this->founder;
+    return *founder;
 }
 
 long Community::getMaxMembersCount() const
@@ -96,10 +103,10 @@ void Community::setName(const char* newName)
     strcpy(this->communityName, newName);
 }
 
-void Community::setFounder(const Person& theFounder)
+void Community::setFounder(Person& theFounder)
 {
     validatePeople(&theFounder);
-    this->founder = theFounder;
+    founder = &theFounder;
 }
 
 void Community::setMembers(Person* members)

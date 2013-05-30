@@ -55,9 +55,17 @@ Person::~Person()
 
 void Person::swapFields(const Person& anotherPerson)
 {
-	this->name = anotherPerson.name;
-	this->EGN = anotherPerson.EGN;
-	this->address = anotherPerson.address;
+    this->name = new char[strlen(anotherPerson.getName()) + 1];
+    strcpy(this->name, anotherPerson.getName());
+
+    this->EGN = new char[strlen(anotherPerson.EGN) + 1];
+    strcpy(this->EGN, anotherPerson.EGN);
+
+    this->address = new char[strlen(anotherPerson.address) + 1];
+    strcpy(this->address, anotherPerson.address);
+	//this->name = anotherPerson.name;
+	//this->EGN = anotherPerson.EGN;
+	//this->address = anotherPerson.address;
 	this->age = anotherPerson.age;
 	this->sex = anotherPerson.sex;
 	this->profession = anotherPerson.profession;

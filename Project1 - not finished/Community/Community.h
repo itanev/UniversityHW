@@ -8,7 +8,7 @@ class Community
 private:
     char* communityName;
     char* foundationDate;
-    Person founder;
+    Person* founder;
     long maxMembersCount;
     long membersCount;
     Person* members;
@@ -21,7 +21,7 @@ private:
     long findSuitableIndex(const char* EGN) const;
     bool fits(unsigned left, unsigned right, unsigned value) const;
 public:
-    Community(const char* communityName, const char* foundationDate, const Person& founder, long maxMembersCount = 2);
+    Community(const char* communityName, const char* foundationDate, Person& founder, long maxMembersCount = 2);
     Community(const Community& anotherCommunity);
     Community& operator=(const Community& anotherCommunity);
     ~Community();
@@ -35,7 +35,7 @@ public:
     int getNumCommunities() const;
 
     void setName(const char* newName);
-    void setFounder(const Person& theFounder);
+    void setFounder(Person& theFounder);
     void setMembers(Person* members);
 
     bool addMember(const Person& person);
