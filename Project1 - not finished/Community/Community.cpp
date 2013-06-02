@@ -17,7 +17,7 @@ Community::Community(const char* communityName, const char* foundationDate,
     validateNumber(maxMembersCount);
 
     this->maxMembersCount = maxMembersCount;
-   // this->members = NULL;
+    this->members = new Person[maxMembersCount];
 }
 
 Community::Community(const Community& anotherCommunity)
@@ -58,8 +58,7 @@ void Community::swapFields(const Community& anotherCommunity)
 
     this->foundationDate = new char[strlen(anotherCommunity.foundationDate) + 1];
     strcpy(this->foundationDate, anotherCommunity.foundationDate);
-   // this->communityName = anotherCommunity.communityName;
-    //this->foundationDate = anotherCommunity.foundationDate;
+
     this->founder = anotherCommunity.founder;
     this->maxMembersCount = anotherCommunity.maxMembersCount;
     this->membersCount = anotherCommunity.membersCount;
