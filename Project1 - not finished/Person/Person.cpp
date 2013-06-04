@@ -16,7 +16,7 @@ Person::Person(const char *name, const char* EGN, const char* address = "",
 	setName(name);
 
 	validateEGN(EGN);
-	this->EGN = new char[strlen(EGN)];
+	this->EGN = new char[strlen(EGN) + 1];
 	strcpy(this->EGN, EGN);
 
 	setAddress(address);
@@ -63,9 +63,6 @@ void Person::swapFields(const Person& anotherPerson)
 
     this->address = new char[strlen(anotherPerson.address) + 1];
     strcpy(this->address, anotherPerson.address);
-	//this->name = anotherPerson.name;
-	//this->EGN = anotherPerson.EGN;
-	//this->address = anotherPerson.address;
 	this->age = anotherPerson.age;
 	this->sex = anotherPerson.sex;
 	this->profession = anotherPerson.profession;
@@ -128,14 +125,14 @@ char* Person::getProfessionAsString() const
 void Person::setName(const char* name)
 {
     validateString(name);
-    this->name = new char[strlen(name)];
+    this->name = new char[strlen(name) + 1];
     strcpy(this->name, name);
 }
 
 void Person::setAddress(const char* address)
 {
     validateString(address);
-    this->address = new char[strlen(address)];
+    this->address = new char[strlen(address) + 1];
     strcpy(this->address, address);
 }
 

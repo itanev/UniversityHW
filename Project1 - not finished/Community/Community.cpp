@@ -9,7 +9,7 @@ Community::Community(const char* communityName, const char* foundationDate,
     setName(communityName);
 
     validateString(foundationDate);
-    this->foundationDate = new char[strlen(foundationDate)];
+    this->foundationDate = new char[strlen(foundationDate) + 1];
     strcpy(this->foundationDate, foundationDate);
 
     setFounder(founder);
@@ -17,6 +17,7 @@ Community::Community(const char* communityName, const char* foundationDate,
     validateNumber(maxMembersCount);
 
     this->maxMembersCount = maxMembersCount;
+    this->membersCount = 0;
     this->members = new Person[maxMembersCount];
 }
 
@@ -98,7 +99,7 @@ Person* Community::getMembers() const
 void Community::setName(const char* newName)
 {
     validateString(newName);
-    this->communityName = new char[strlen(newName)];
+    this->communityName = new char[strlen(newName) + 1];
     strcpy(this->communityName, newName);
 }
 
@@ -131,7 +132,9 @@ bool Community::doesElementExist(const char* EGN) const
 
     while(true)
     {
+        if(imin >= imax) break;
         int imid = (imin + imax) / 2;
+
         unsigned currEGN = atoi(this->members[imid].getEGN());
 
         if(currEGN < egn)
@@ -153,9 +156,10 @@ long Community::findSuitableIndex(const char* EGN) const
     int egn = atoi(EGN);
     unsigned neighbourElement = 0;
     long neighbourElementIndex = 0;
-
+    //TODO: fix binary search. imin and imax does not change.
     while(true)
     {
+        if(imin >= imax) break;
         int imid = (imin + imax) / 2;
         unsigned centralMemberEGN = atoi(this->members[imid].getEGN());
 
@@ -197,6 +201,9 @@ bool Community::isMember(const char* EGN) const
 
 bool Community::addMember(const Person& person)
 {
+    if(membersCount == 0)
+        members[0] = person;
+
     if(isMember(person.getEGN()))
         return false;
 
@@ -208,9 +215,7 @@ bool Community::addMember(const Person& person)
         this->members = new Person[maxMembersCount];
 
         for(long i = 0; i < this->membersCount; ++i)
-        {
             members[i] = people[i];
-        }
 
         delete[] people;
     }
@@ -220,11 +225,12 @@ bool Community::addMember(const Person& person)
         Person currMember = members[0];
         if(atoi(currMember.getEGN()) > atoi(person.getEGN()))
         {
-            Person* people = members;
-            members = new Person[maxMembersCount];
-
-            people[0] = person;
-            people[1] = currMember;
+            members[0] = person;
+            members[1] = currMember;
+        }
+        else
+        {
+            members[1] = person;
         }
     }
     else
@@ -244,6 +250,7 @@ bool Community::addMember(const Person& person)
 
         delete[] people;
     }
+    ++membersCount;
 }
 
 Community::~Community()

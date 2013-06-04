@@ -15,18 +15,12 @@ int main()
         Person kiro("Kiro", "1239405421", "some address", Programmer, 10000);
         Person kiro1("Kiro", "1249405421", "some address", Programmer, 10000);
 
-//        Person * people;
-//
-//        people = new Person[1];
-//        people[0] = pesho;
-//
-//        cout << people[0];
+        Community baiIvan("bai Ivan", "12.12.12", kiro, 5);
+        baiIvan.addMember(pesho);
+        baiIvan.addMember(kiro1);
+        baiIvan.addMember(kiro);
 
-        Community baiIvan("baiIvan", "12.12.12", kiro, 5);
-        //baiIvan.addMember(pesho);
-        //baiIvan.addMember(kiro1);
-
-        //cout << baiIvan.getName();
+        cout << baiIvan.getName();
     }
     catch(exception& ex)
     {
