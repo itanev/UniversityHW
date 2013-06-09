@@ -29,6 +29,8 @@ public:
 	Person(const char *name, const char* EGN, const char* address, Profession profession, double income);
 	Person(const Person& anotherPerson);
 	Person& operator=(const Person& anotherPerson);
+	bool operator!=(const Person& anotherPerson);
+	bool operator==(const Person& anotherPerson);
 	friend ostream& operator<<(ostream& out, const Person& person);
 	~Person();
 

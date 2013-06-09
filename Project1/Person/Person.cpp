@@ -201,3 +201,16 @@ void Person::information(ostream& out = cout) const
 	out << "Profession: " << getProfessionAsString() << endl;
 	out << "Income: " << income << endl;
 }
+
+bool Person::operator!=(const Person& anotherPerson)
+{
+    return *this == anotherPerson;
+}
+
+bool Person::operator==(const Person& anotherPerson)
+{
+    if(*EGN == *anotherPerson.EGN)
+        return true;
+
+    return false;
+}
