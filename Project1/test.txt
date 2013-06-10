@@ -1,0 +1,18 @@
+Kiro Ivanov
+12.12.12
+Name: Pesho
+Age: 101
+Address: some address
+Sex: Male
+EGN: 1239405521
+Profession: Programmer
+Income: 10000
+
+Name: Pesho
+Age: 101
+Address: some address
+Sex: Male
+EGN: 1239405521
+Profession: Programmer
+Income: 10000
+

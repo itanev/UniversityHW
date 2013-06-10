@@ -166,6 +166,9 @@ bool Community::removeMember(const char* EGN)
 
 void Community::information(ostream& out = cout) const
 {
+    out << this->communityName << endl;
+    out << this->foundationDate << endl;
+    out << *founder << endl;
     map<char*, Person>::const_iterator iter;
 
     for (iter = members.begin(); iter != members.end(); ++iter)
