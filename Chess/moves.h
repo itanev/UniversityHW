@@ -11,7 +11,7 @@ enum Moves
     EntireRow,
     EntireCol,
     EntireDiagonal,
-    Horse,
+    HorseMove,
     PawnMove
 };
 

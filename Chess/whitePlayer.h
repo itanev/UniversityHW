@@ -3,6 +3,34 @@
 
 class WhitePlayer : public virtual Player
 {
+protected:
+    virtual bool validateColor(bool validColor, bool color)
+    {
+        return validColor == color;
+    }
+
+private:
+    bool notInRange(int row, int col)
+    {
+        return (row < 0 ||
+               row >= dimentions ||
+               col < 0 ||
+               col >= dimentions);
+    }
+
+    bool isSameColorFigure(int row, int col, Field& gameField)
+    {
+        if(gameField.isCellFree(row, col)) return false;
+        return validateColor(gameField.getFigure(row, col).getColor(), true);
+    }
+
+    void setCellForHorse(int row, int col, Field& gameField)
+    {
+        if(!notInRange(row, col) &&
+           !isSameColorFigure(row, col, gameField))
+            field[row][col] = true;
+    }
+
     void getPosibleMovesOneDiagonal(int currRow, int currCol)
     {
         if( (currRow + 1) < dimentions && (currCol + 1) < dimentions)
@@ -15,44 +43,29 @@ class WhitePlayer : public virtual Player
             field[currRow - 1][currCol + 1] = true;
     }
 
-    void getPosibleMovesEntireDiagonal(int currRow, int currCol)
+    void getPosibleMovesEntireDiagonal(int startRow, int startCol, int row, int col, Field& gameField)
     {
-        int startRow = currRow;
-        int startCol = currCol;
-        while(startRow < dimentions && startCol < dimentions)
-        {
-            field[startRow][startCol] = true;
-            ++startRow;
-            ++startCol;
-        }
-        startRow = currRow;
-        startCol = currCol;
-        while(startRow >= 0 && startCol >= 0)
-        {
-            field[startRow][startCol] = true;
-            --startRow;
-            --startCol;
-        }
+        if(row >= dimentions || row < 0 || col >= dimentions || col < 0) return;
+
+        if(startRow != row && startCol != col && isSameColorFigure(row, col, gameField)) return;
+
+        if(startRow != row && startCol != col && field[row][col]) return;
+
+        field[row][col] = true;
+        getPosibleMovesEntireDiagonal(startRow, startCol, row + 1, col + 1, gameField);
+        getPosibleMovesEntireDiagonal(startRow, startCol, row - 1, col - 1, gameField);
     }
 
-    void getPosibleMovesHorse(int currRow, int currCol)
+    void getPosibleMovesHorse(int currRow, int currCol, Field& gameField)
     {
-        if(currRow + 2 < dimentions && currCol + 1 < dimentions)
-            field[currRow + 2][currCol + 1] = true;
-        if(currRow + 2 < dimentions && currCol - 1 >= 0)
-            field[currRow + 2][currCol - 1] = true;
-        if(currRow - 2 >= 0 && currCol + 1 < dimentions)
-            field[currRow - 2][currCol + 1] = true;
-        if(currRow - 2 >= 0 && currCol - 1 >= 0)
-            field[currRow - 2][currCol - 1] = true;
-        if(currCol + 2 < dimentions && currRow + 1 < dimentions)
-            field[currRow + 1][currCol + 2] = true;
-        if(currCol + 2 < dimentions && currRow - 1 >= 0)
-            field[currRow - 1][currCol + 2] = true;
-        if(currCol - 2 >= 0 && currRow + 1 < dimentions)
-            field[currRow + 1][currCol - 2] = true;
-        if(currCol - 2 >= 0 && currRow - 1 >= 0)
-            field[currRow - 1][currCol - 2] = true;
+        setCellForHorse(currRow + 2, currCol + 1, gameField);
+        setCellForHorse(currRow + 2, currCol - 1, gameField);
+        setCellForHorse(currRow - 2, currCol + 1, gameField);
+        setCellForHorse(currRow - 2, currCol - 1, gameField);
+        setCellForHorse(currRow + 1, currCol + 2, gameField);
+        setCellForHorse(currRow - 1, currCol + 2, gameField);
+        setCellForHorse(currRow + 1, currCol - 2, gameField);
+        setCellForHorse(currRow - 1, currCol - 2, gameField);
     }
 
     virtual void getPosibleMovesPawn(int currRow, int currCol, Field& gameField)
@@ -60,8 +73,10 @@ class WhitePlayer : public virtual Player
         if(currRow == dimentions - 2 &&
            !gameField.getFigure(currRow, currCol).moved)
         {
-            field[currRow - 1][currCol] = true;
-            field[currRow - 2][currCol] = true;
+            if(! isSameColorFigure(currRow - 1, currCol, gameField))
+                field[currRow - 1][currCol] = true;
+            if(! isSameColorFigure(currRow - 2, currCol, gameField))
+                field[currRow - 2][currCol] = true;
         }
 
         gameField.getFigure(currRow, currCol).moved = true;
@@ -70,15 +85,41 @@ class WhitePlayer : public virtual Player
            currCol - 1 >= 0 &&
            !gameField.isCellFree(currRow - 1, currCol - 1))
         {
-            field[currRow - 1][currCol - 1] = true;
+            if(! isSameColorFigure(currRow - 1, currCol - 1, gameField))
+                field[currRow - 1][currCol - 1] = true;
         }
 
         if(currRow - 1 >= 0 &&
            currCol + 1 <= dimentions &&
            !gameField.isCellFree(currRow - 1, currCol + 1))
         {
-            field[currRow - 1][currCol + 1] = true;
+            if(! isSameColorFigure(currRow - 1, currCol + 1, gameField))
+                field[currRow - 1][currCol + 1] = true;
         }
+    }
+
+    void getPosibleMovesEntireRow(int startCol, int row, int col, Field& gameField)
+    {
+        if(col >= dimentions || col < 0) return;
+        if(startCol != col && field[row][col]) return;
+        if(startCol != col && isSameColorFigure(row, col, gameField)) return;
+
+        field[row][col] = true;
+
+        getPosibleMovesEntireRow(startCol, row, col + 1, gameField);
+        getPosibleMovesEntireRow(startCol, row, col - 1, gameField);
+    }
+
+    void getPosibleMovesEntireCol(int startRow, int row, int col, Field& gameField)
+    {
+        if(row >= dimentions || row < 0) return;
+        if(startRow != row && field[row][col]) return;
+        if(startRow != row && isSameColorFigure(row, col, gameField)) return;
+
+        field[row][col] = true;
+
+        getPosibleMovesEntireCol(startRow, row + 1, col, gameField);
+        getPosibleMovesEntireCol(startRow, row - 1, col, gameField);
     }
 
     void getPosibleMoves(std::vector<Moves> moves, int currRow, int currCol, Field& gameField)
@@ -88,37 +129,39 @@ class WhitePlayer : public virtual Player
             switch( moves[i] )
             {
                 case OneForward:
-                    if(currRow - 1 >= 0)
+                    if(currRow - 1 >= 0 &&
+                       !isSameColorFigure(currRow - 1, currCol, gameField))
                         field[currRow - 1][currCol] = true;
                     break;
                 case OneBackward:
-                    if(currRow + 1 < dimentions)
+                    if(currRow + 1 < dimentions &&
+                       !isSameColorFigure(currRow + 1, currCol, gameField))
                         field[currRow + 1][currCol] = true;
                     break;
                 case OneLeft:
-                    if(currCol - 1 >= 0)
+                    if(currCol - 1 >= 0 &&
+                       !isSameColorFigure(currRow, currCol - 1, gameField))
                         field[currRow][currCol - 1] = true;
                     break;
                 case OneRight:
-                    if(currCol + 1 < dimentions)
+                    if(currCol + 1 < dimentions &&
+                       !isSameColorFigure(currRow, currCol + 1, gameField))
                         field[currRow][currCol + 1] = true;
                     break;
                 case OneDiagonal:
                     getPosibleMovesOneDiagonal(currRow, currCol);
                     break;
                 case EntireRow:
-                    for(int k = 0; k < dimentions; ++k)
-                        field[currRow][k] = true;
+                    getPosibleMovesEntireRow(currCol, currRow, currCol, gameField);
                     break;
                 case EntireCol:
-                    for(int k = 0; k < dimentions; ++k)
-                        field[k][currCol] = true;
+                    getPosibleMovesEntireCol(currRow, currRow, currCol, gameField);
                     break;
                 case EntireDiagonal:
-                    getPosibleMovesEntireDiagonal(currRow, currCol);
+                    getPosibleMovesEntireDiagonal(currRow, currCol, currRow, currCol, gameField);
                     break;
-                case Horse:
-                    getPosibleMovesHorse(currRow, currCol);
+                case HorseMove:
+                    getPosibleMovesHorse(currRow, currCol, gameField);
                     break;
                 case PawnMove:
                     getPosibleMovesPawn(currRow, currCol, gameField);
@@ -127,25 +170,11 @@ class WhitePlayer : public virtual Player
         }
     }
 
-    bool inRange(int row, int col)
-    {
-        return (row < 0 ||
-               row >= dimentions ||
-               col < 0 ||
-               col >= dimentions);
-    }
-
-protected:
-    virtual bool validateColor(bool validColor, bool color)
-    {
-        return validColor == color;
-    }
-
 public:
     bool moveFigure(int currRow, int currCol, int newRow, int newCol, Field& gameField)
     {
-        if(inRange(currRow, currCol) &&
-           inRange(newRow, newCol)) return false;
+        if(notInRange(currRow, currCol) &&
+           notInRange(newRow, newCol)) return false;
 
         if(gameField.isCellFree(currRow, currCol)) return false;
 
@@ -156,7 +185,6 @@ public:
         }
 
         memset(field, false, sizeof(field));
-        field[currRow][currCol] = true;
         Figure * currFigure = gameField.getFigure(currRow, currCol).clone();
 
         if( !validateColor(currFigure->getColor(), true) ) return false;
@@ -181,4 +209,4 @@ public:
     }
 };
 
-#endif // WHITE_PLAYER
+#endif
