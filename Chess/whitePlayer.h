@@ -55,7 +55,33 @@ class WhitePlayer : public virtual Player
             field[currRow - 1][currCol - 2] = true;
     }
 
-    void getPosibleMoves(std::vector<Moves> moves, int currRow, int currCol)
+    virtual void getPosibleMovesPawn(int currRow, int currCol, Field& gameField)
+    {
+        if(currRow == dimentions - 2 &&
+           !gameField.getFigure(currRow, currCol).moved)
+        {
+            field[currRow - 1][currCol] = true;
+            field[currRow - 2][currCol] = true;
+        }
+
+        gameField.getFigure(currRow, currCol).moved = true;
+
+        if(currRow - 1 >= 0 &&
+           currCol - 1 >= 0 &&
+           !gameField.isCellFree(currRow - 1, currCol - 1))
+        {
+            field[currRow - 1][currCol - 1] = true;
+        }
+
+        if(currRow - 1 >= 0 &&
+           currCol + 1 <= dimentions &&
+           !gameField.isCellFree(currRow - 1, currCol + 1))
+        {
+            field[currRow - 1][currCol + 1] = true;
+        }
+    }
+
+    void getPosibleMoves(std::vector<Moves> moves, int currRow, int currCol, Field& gameField)
     {
         for(int i = 0; i < moves.size(); ++i)
         {
@@ -94,8 +120,19 @@ class WhitePlayer : public virtual Player
                 case Horse:
                     getPosibleMovesHorse(currRow, currCol);
                     break;
+                case PawnMove:
+                    getPosibleMovesPawn(currRow, currCol, gameField);
+                    break;
             }
         }
+    }
+
+    bool inRange(int row, int col)
+    {
+        return (row < 0 ||
+               row >= dimentions ||
+               col < 0 ||
+               col >= dimentions);
     }
 
 protected:
@@ -107,12 +144,16 @@ protected:
 public:
     bool moveFigure(int currRow, int currCol, int newRow, int newCol, Field& gameField)
     {
-        if(newRow < 0 ||
-           newRow >= dimentions ||
-           newCol < 0 ||
-           newCol >= dimentions) return false;
+        if(inRange(currRow, currCol) &&
+           inRange(newRow, newCol)) return false;
 
         if(gameField.isCellFree(currRow, currCol)) return false;
+
+        if(!gameField.isCellFree(newRow, newCol) &&
+           gameField.getFigure(newRow, newCol).getSymbol() == 'K')
+        {
+            return false;
+        }
 
         memset(field, false, sizeof(field));
         field[currRow][currCol] = true;
@@ -123,10 +164,10 @@ public:
         if(! gameField.isCellFree(newRow, newCol))
         {
             Figure * figureOnNewCell = gameField.getFigure(newRow, newCol).clone();
-            if(figureOnNewCell->getColor()) return false;
+            if(validateColor(true, figureOnNewCell->getColor())) return false;
         }
 
-        getPosibleMoves( (*(currFigure->GetMoves())), currRow, currCol );
+        getPosibleMoves( (*(currFigure->GetMoves())), currRow, currCol, gameField );
 
         if(field[newRow][newCol])
         {

@@ -8,6 +8,7 @@
 #include "moves.h"
 #include "figure.h"
 #include "king.h"
+#include "pawn.h"
 #include "cell.h"
 #include "field.h"
 #include "renderer.h"
@@ -30,10 +31,12 @@ int main()
 {
     Figure* king = new King(true);
     Figure* king2 = new King(false);
+    Figure* pawn = new Pawn(true);
 
     Field gameField;
-    gameField.setFigure(1,1, king);
-    gameField.setFigure(1,2, king2);
+    gameField.setFigure(3,2, king);
+    gameField.setFigure(5,2, king2);
+    gameField.setFigure(6,1, pawn);
 
     Renderer* drawer = new ConsoleRenderer();
     Player* me = new WhitePlayer();

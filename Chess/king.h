@@ -6,6 +6,7 @@ class King : public Figure
 public:
     King(bool color)
     {
+        moved = false;
         symbol = 'K';
         this->color = color;
         moves.push_back(OneDiagonal);

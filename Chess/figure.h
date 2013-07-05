@@ -8,6 +8,8 @@ protected:
     char symbol;
     bool color;
 public:
+    bool moved;
+
     Figure(){}
 
     Figure(char symbol, bool color)
