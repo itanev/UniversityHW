@@ -25,23 +25,18 @@
 
 using namespace std;
 
-void setFigures(bool color, Field& gameField)
+void setBlackFigures(Field& gameField)
 {
-    Figure* king = new King(color);
-    Figure* queen = new Queen(color);
-    Figure* leftHorse = new Horse(color);
-    Figure* rightHorse = new Horse(color);
-    Figure* leftRook = new Rook(color);
-    Figure* rightRook = new Rook(color);
-    Figure* leftOfficer = new Officer(color);
-    Figure* rightOfficer = new Officer(color);
+    Figure* king = new King(false);
+    Figure* queen = new Queen(false);
+    Figure* leftHorse = new Horse(false);
+    Figure* rightHorse = new Horse(false);
+    Figure* leftRook = new Rook(false);
+    Figure* rightRook = new Rook(false);
+    Figure* leftOfficer = new Officer(false);
+    Figure* rightOfficer = new Officer(false);
 
     int firstRow = 0, secondRow = 1;
-    if(!color)
-    {
-        firstRow = gameField.getDimentions();
-        secondRow = firstRow - 1;
-    }
 
     gameField.setFigure(firstRow,4, king);
     gameField.setFigure(firstRow,3, queen);
@@ -52,19 +47,42 @@ void setFigures(bool color, Field& gameField)
     gameField.setFigure(firstRow,6, rightHorse);
     gameField.setFigure(firstRow,7, rightRook);
 
-    //Figure* pawnOne = new Pawn(color);
-    //gameField.setFigure(secondRow,0, pawnOne);
+    Figure* pawnOne = new Pawn(false);
+    gameField.setFigure(secondRow,1, pawnOne);
+}
+
+void setWhiteFigures(Field& gameField)
+{
+    Figure* king = new King(true);
+    Figure* queen = new Queen(true);
+    Figure* leftHorse = new Horse(true);
+    Figure* rightHorse = new Horse(true);
+    Figure* leftRook = new Rook(true);
+    Figure* rightRook = new Rook(true);
+    Figure* leftOfficer = new Officer(true);
+    Figure* rightOfficer = new Officer(true);
+
+    int firstRow = gameField.getDimentions() - 1, secondRow = firstRow - 1;
+
+    gameField.setFigure(firstRow,4, king);
+    gameField.setFigure(firstRow,3, queen);
+    gameField.setFigure(firstRow,2, leftOfficer);
+    gameField.setFigure(firstRow,1, leftHorse);
+    gameField.setFigure(firstRow,0, leftRook);
+    gameField.setFigure(firstRow,5, rightOfficer);
+    gameField.setFigure(firstRow,6, rightHorse);
+    gameField.setFigure(firstRow,7, rightRook);
+
+    Figure* pawnOne = new Pawn(true);
+    gameField.setFigure(secondRow,1, pawnOne);
 }
 
 int main()
 {
     Field gameField;
 
-    setFigures(true, gameField);
-    //setFigures(false, gameField);
-
-    Figure* pawnOne = new Pawn(false);
-    gameField.setFigure(1,0, pawnOne);
+    setWhiteFigures(gameField);
+    setBlackFigures(gameField);
 
     Renderer* drawer = new ConsoleRenderer();
     Player* me = new WhitePlayer();
