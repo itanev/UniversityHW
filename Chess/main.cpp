@@ -35,6 +35,14 @@ void setBlackFigures(Field& gameField)
     Figure* rightRook = new Rook(false);
     Figure* leftOfficer = new Officer(false);
     Figure* rightOfficer = new Officer(false);
+    Figure* pawnOne = new Pawn(false);
+    Figure* pawnTwo = new Pawn(false);
+    Figure* pawnThree = new Pawn(false);
+    Figure* pawnFour = new Pawn(false);
+    Figure* pawnFive = new Pawn(false);
+    Figure* pawnSix = new Pawn(false);
+    Figure* pawnSeven = new Pawn(false);
+    Figure* pawnEight = new Pawn(false);
 
     int firstRow = 0, secondRow = 1;
 
@@ -47,8 +55,14 @@ void setBlackFigures(Field& gameField)
     gameField.setFigure(firstRow,6, rightHorse);
     gameField.setFigure(firstRow,7, rightRook);
 
-    Figure* pawnOne = new Pawn(false);
-    gameField.setFigure(secondRow,1, pawnOne);
+    gameField.setFigure(secondRow,0, pawnOne);
+    gameField.setFigure(secondRow,1, pawnTwo);
+    gameField.setFigure(secondRow,2, pawnThree);
+    gameField.setFigure(secondRow,3, pawnFour);
+    gameField.setFigure(secondRow,4, pawnFive);
+    gameField.setFigure(secondRow,5, pawnSix);
+    gameField.setFigure(secondRow,6, pawnSeven);
+    gameField.setFigure(secondRow,7, pawnEight);
 }
 
 void setWhiteFigures(Field& gameField)
@@ -61,6 +75,14 @@ void setWhiteFigures(Field& gameField)
     Figure* rightRook = new Rook(true);
     Figure* leftOfficer = new Officer(true);
     Figure* rightOfficer = new Officer(true);
+    Figure* pawnOne = new Pawn(true);
+    Figure* pawnTwo = new Pawn(true);
+    Figure* pawnThree = new Pawn(true);
+    Figure* pawnFour = new Pawn(true);
+    Figure* pawnFive = new Pawn(true);
+    Figure* pawnSix = new Pawn(true);
+    Figure* pawnSeven = new Pawn(true);
+    Figure* pawnEight = new Pawn(true);
 
     int firstRow = gameField.getDimentions() - 1, secondRow = firstRow - 1;
 
@@ -73,8 +95,14 @@ void setWhiteFigures(Field& gameField)
     gameField.setFigure(firstRow,6, rightHorse);
     gameField.setFigure(firstRow,7, rightRook);
 
-    Figure* pawnOne = new Pawn(true);
-    gameField.setFigure(secondRow,1, pawnOne);
+    gameField.setFigure(secondRow,0, pawnOne);
+    gameField.setFigure(secondRow,1, pawnTwo);
+    gameField.setFigure(secondRow,2, pawnThree);
+    gameField.setFigure(secondRow,3, pawnFour);
+    gameField.setFigure(secondRow,4, pawnFive);
+    gameField.setFigure(secondRow,5, pawnSix);
+    gameField.setFigure(secondRow,6, pawnSeven);
+    gameField.setFigure(secondRow,7, pawnEight);
 }
 
 int main()
@@ -94,13 +122,12 @@ int main()
     drawer->DrawField(gameField);
     string input;
     getline(cin, input);
+    Parser * reader = new ConsoleParser();
 
     while(input != "exit")
     {
         turnComplete = false;
         cout << endl;
-
-        Parser * reader = new ConsoleParser();
         vector<int> coords = reader->Parse(input);
 
         if(turn)
@@ -135,6 +162,10 @@ int main()
         getline(cin, input);
         if(turnComplete) turn = !turn;
     }
+
+    delete drawer;
+    delete me;
+    delete other;
 
     return 0;
 }

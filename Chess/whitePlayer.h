@@ -54,6 +54,8 @@ private:
         field[row][col] = true;
         getPosibleMovesEntireDiagonal(startRow, startCol, row + 1, col + 1, gameField);
         getPosibleMovesEntireDiagonal(startRow, startCol, row + 1, col - 1, gameField);
+        getPosibleMovesEntireDiagonal(startRow, startCol, row - 1, col + 1, gameField);
+        getPosibleMovesEntireDiagonal(startRow, startCol, row - 1, col - 1, gameField);
     }
 
     void getPosibleMovesHorse(int currRow, int currCol, Field& gameField)
