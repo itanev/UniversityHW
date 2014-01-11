@@ -2,6 +2,7 @@
 #include <stdlib.h>
 #include <fstream>
 #include <vector>
+#include <algorithm>
 #include <set>
 #include <queue>
 #include <string>
@@ -67,6 +68,7 @@ Course getCourse(vector<string>& parts)
 int main()
 {
     vector<Course> courses;
+    Graph<Course> graph;
     ifstream input("courses.txt");
 
     if(input.is_open())
@@ -76,8 +78,12 @@ int main()
             string currCourse;
             getline(input, currCourse);
             vector<string> parts = split(currCourse, "|");
-            courses.push_back(getCourse(parts));
+            Course course = getCourse(parts);
+            Node<Course> node(&course);
+            graph.addNode(node);
         }
+
+        cout << graph.topologicalSort()[0].getVal().id;
     }
 
     input.close();

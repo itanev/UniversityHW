@@ -8,37 +8,28 @@ class Graph
 {
     vector<Node<T> > Nodes;
 
-    Node<T>& BFS(vector<string>& specialities)
+    void ConnectNode(Node<T> newNode)
     {
+        if(empty()) return;
         queue<Node<T> > nodes;
         nodes.push(Nodes.front());
         Nodes.front().visit();
+        Node<T> currNode = nodes.front();
         while(!nodes.empty())
         {
-            Node<T> currNode = nodes.front();
-            if(contains<string>(specialities, currNode.getVal().specialities)) return currNode;
-            vector<Node<T> > currNodeSuccessors = currNode.getSuccessors();
-            for(int i = 0; i < currNodeSuccessors.size(); i++)
+            if(std::count(newNode.getVal().takenCourses.begin(),
+                          newNode.getVal().takenCourses.end(),
+                          currNode.getVal().id) > 0)
             {
-                nodes.push(currNodeSuccessors[i]);
-                currNodeSuccessors[i].visit();
+                currNode.addSuccessor(newNode);
             }
 
-            nodes.pop();
-        }
-
-        return NULL;
-    }
-
-    Node<T>& BFS(vector<int>& requirements)
-    {
-        queue<Node<T> > nodes;
-        nodes.push(Nodes.front());
-        Nodes.front().visit();
-        while(!nodes.empty())
-        {
-            Node<T> currNode = nodes.front();
-            if(contains<int>(requirements, currNode.getVal().requirements)) return currNode;
+            if(std::count(currNode.getVal().takenCourses.begin(),
+                         currNode.getVal().takenCourses.end(),
+                         newNode.getVal().id) > 0)
+            {
+                newNode.addSuccessor(currNode);
+            }
 
             vector<Node<T> > currNodeSuccessors = currNode.getSuccessors();
             for(int i = 0; i < currNodeSuccessors.size(); i++)
@@ -49,34 +40,9 @@ class Graph
             }
 
             nodes.pop();
+            if(!nodes.empty())
+                currNode = nodes.front();
         }
-
-        return NULL;
-    }
-
-    Node<T>& BFS(vector<string>& specialities, vector<int>& requirements)
-    {
-        queue<Node<T> > nodes;
-        nodes.push(Nodes.front());
-        Nodes.front().visit();
-        while(!nodes.empty())
-        {
-            Node<T> currNode = nodes.front();
-            if(contains<int>(specialities, currNode.getVal().specialities) &&
-               contains<string>(requirements, currNode.getVal().requirements)) return currNode;
-
-            vector<Node<T> > currNodeSuccessors = currNode.getSuccessors();
-            for(int i = 0; i < currNodeSuccessors.size(); i++)
-            {
-                if(currNodeSuccessors[i].isVisited()) continue;
-                nodes.push(currNodeSuccessors[i]);
-                currNodeSuccessors[i].visit();
-            }
-
-            nodes.pop();
-        }
-
-        return NULL;
     }
 
     void topologicalSortUtil(Node<T>& node, vector<Node<T> > &sortedNodes)
@@ -91,8 +57,8 @@ class Graph
             i->visit();
             sortedNodes.push_back(*i);
         }
-
-        topologicalSort(successors.front(), sortedNodes);
+        //TODO: fix
+        topologicalSortUtil(successors.front(), sortedNodes);
     }
 
     void unvisitNodes()
@@ -104,18 +70,6 @@ class Graph
         }
     }
 
-    template<class K>
-    bool contains(vector<K>& searched, set<K>& current)
-    {
-        typename vector<K>::iterator i;
-        for(i = searched.begin(); i != searched.end(); ++i)
-        {
-            if(current.count(*i) <= 0) return false;
-        }
-
-        return true;
-    }
-
 public:
     Graph() { }
 
@@ -124,26 +78,15 @@ public:
         this->Nodes = nodes;
     }
 
+    bool empty()
+    {
+        return Nodes.size() == 0;
+    }
+
     void addNode(Node<T>& node)
     {
+        ConnectNode(node);
         Nodes.push_back(node);
-    }
-
-    Node<T>& findNode(vector<string>& specialities)
-    {
-        return BFS(specialities);
-        unvisitNodes();
-    }
-
-    Node<T>& findNode(vector<int>& requirements)
-    {
-        return BFS(requirements);
-        unvisitNodes();
-    }
-
-    Node<T>& findNode(vector<string>& specialities, vector<int>& requirements)
-    {
-        return BFS(specialities, requirements);
         unvisitNodes();
     }
 
@@ -151,6 +94,6 @@ public:
     {
         vector<Node<T> > sortedNodes;
         topologicalSortUtil(Nodes.front(), sortedNodes);
-        return &sortedNodes;
+        return sortedNodes;
     }
 };

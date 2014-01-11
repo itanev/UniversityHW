@@ -20,7 +20,7 @@ public:
 
     T& getVal()
     {
-        return val;
+        return *val;
     }
 
     void addSuccessor(Node successor)
