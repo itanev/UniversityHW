@@ -1,5 +1,6 @@
 using std::string;
 using std::queue;
+using std::stack;
 using std::vector;
 using std::set;
 
@@ -45,20 +46,43 @@ class Graph
         }
     }
 
-    void topologicalSortUtil(Node<T>& node, vector<Node<T> > &sortedNodes)
+    vector<Node<T> >& topologicalSortUtil()
     {
-        if(sortedNodes.size() == Nodes.size()) return;
-        typename vector<Node<T> >::iterator i;
-        node.visit();
-        vector<Node<T> > successors = node.getSuccessors();
-        for(i = successors.begin(); i != successors.end(); ++i)
+        stack<Node<T> > nodes;
+        vector<Node<T> > sortedNodes;
+        typename vector<Node<T> >::iterator i = Nodes.begin();
+        nodes.push(*i);
+        i->visit();
+        Node<T> currNode = nodes.top();
+        while(!nodes.empty())
         {
-            if(i->isVisited()) continue;
-            i->visit();
-            sortedNodes.push_back(*i);
+            vector<Node<T> > currNodeSuccessors = currNode.getSuccessors();
+            if(currNodeSuccessors.size() == 0)
+            {
+                if(!currNode.isVisited())
+                {
+                    sortedNodes.push_back(currNode);
+                    currNode.visit();
+                }
+                else i++;
+            }
+            else
+            {
+                for(int i = 0; i < currNodeSuccessors.size(); i++)
+                {
+                    if(currNodeSuccessors[i].isVisited()) continue;
+                    nodes.push(currNodeSuccessors[i]);
+                    sortedNodes.push_back(currNodeSuccessors[i]);
+                    currNodeSuccessors[i].visit();
+                }
+            }
+
+            nodes.pop();
+            if(!nodes.empty())
+                currNode = nodes.top();
         }
-        //TODO: fix
-        topologicalSortUtil(successors.front(), sortedNodes);
+
+        return sortedNodes;
     }
 
     void unvisitNodes()
@@ -92,8 +116,6 @@ public:
 
     vector<Node<T> >& topologicalSort()
     {
-        vector<Node<T> > sortedNodes;
-        topologicalSortUtil(Nodes.front(), sortedNodes);
-        return sortedNodes;
+        return topologicalSortUtil();
     }
 };

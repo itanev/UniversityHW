@@ -5,6 +5,7 @@
 #include <algorithm>
 #include <set>
 #include <queue>
+#include <stack>
 #include <string>
 #include "Course.cpp"
 #include "Graph/Node.cpp"
@@ -83,7 +84,7 @@ int main()
             graph.addNode(node);
         }
 
-        cout << graph.topologicalSort()[0].getVal().id;
+        cout << graph.topologicalSort().front().getVal().id;
     }
 
     input.close();
