@@ -10,6 +10,7 @@
 #include "Course.cpp"
 #include "Graph/Node.cpp"
 #include "Graph/Graph.cpp"
+#include "Student/Student.cpp"
 
 using namespace std;
 
@@ -68,7 +69,6 @@ Course getCourse(vector<string>& parts)
 
 int main()
 {
-    vector<Course> courses;
     Graph<Course> graph;
     ifstream input("courses.txt");
 
@@ -80,11 +80,17 @@ int main()
             getline(input, currCourse);
             vector<string> parts = split(currCourse, "|");
             Course course = getCourse(parts);
-            Node<Course> node(&course);
+            Node<Course> node(course);
             graph.addNode(node);
         }
 
-        cout << graph.topologicalSort().front().getVal().id;
+        //graph.topologicalSort();
+        Student student(graph);
+        //student.printAvailableCourses();
+        cout << "Enter minimum num of choosable disciplines: ";
+        int cd = 0;
+        cin >> cd;
+        student.printBestOptionForCourses(cd);
     }
 
     input.close();

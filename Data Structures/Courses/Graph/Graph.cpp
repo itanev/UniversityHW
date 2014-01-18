@@ -1,97 +1,101 @@
 using std::string;
-using std::queue;
 using std::stack;
 using std::vector;
 using std::set;
+using std::cout;
 
 template<class T>
 class Graph
 {
     vector<Node<T> > Nodes;
 
-    void ConnectNode(Node<T> newNode)
+    bool contains(vector<int> collection, int item)
     {
-        if(empty()) return;
-        queue<Node<T> > nodes;
-        nodes.push(Nodes.front());
-        Nodes.front().visit();
-        Node<T> currNode = nodes.front();
-        while(!nodes.empty())
+        typename vector<int>::iterator i;
+        for(i = collection.begin(); i != collection.end(); ++i)
         {
-            if(std::count(newNode.getVal().takenCourses.begin(),
-                          newNode.getVal().takenCourses.end(),
-                          currNode.getVal().id) > 0)
+            if(*i == item) return true;
+        }
+
+        return false;
+    }
+
+    bool contains(vector<int> biggerCollection, vector<int> smallerCollection)
+    {
+        if(biggerCollection.size() == 1 && biggerCollection.front() == 0) return true;
+
+        typename vector<int>::iterator i;
+        for(i = smallerCollection.begin(); i != smallerCollection.end(); ++i)
+        {
+            if(!contains(biggerCollection, *i)) return false;
+        }
+
+        return true;
+    }
+
+    void ConnectNode(Node<T>& newNode)
+    {
+        typename vector<Node<T> >::iterator i;
+        for(i = Nodes.begin(); i != Nodes.end(); ++i)
+        {
+            if(contains(newNode.getVal().takenCourses, i->getVal().id))
             {
-                currNode.addSuccessor(newNode);
+                i->addSuccessor(newNode);
             }
 
-            if(std::count(currNode.getVal().takenCourses.begin(),
-                         currNode.getVal().takenCourses.end(),
-                         newNode.getVal().id) > 0)
+            if(contains(i->getVal().takenCourses, newNode.getVal().id))
             {
-                newNode.addSuccessor(currNode);
+                newNode.addSuccessor(*i);
             }
-
-            vector<Node<T> > currNodeSuccessors = currNode.getSuccessors();
-            for(int i = 0; i < currNodeSuccessors.size(); i++)
-            {
-                if(currNodeSuccessors[i].isVisited()) continue;
-                nodes.push(currNodeSuccessors[i]);
-                currNodeSuccessors[i].visit();
-            }
-
-            nodes.pop();
-            if(!nodes.empty())
-                currNode = nodes.front();
         }
     }
 
-    vector<Node<T> >& topologicalSortUtil()
+    vector<Node<T> > topologicalSortUtil()
     {
         stack<Node<T> > nodes;
         vector<Node<T> > sortedNodes;
+        bool * visited = new bool[Nodes.size()];
         typename vector<Node<T> >::iterator i = Nodes.begin();
         nodes.push(*i);
-        i->visit();
+        visited[i->getVal().id - 1] = true;
+        sortedNodes.push_back(*i);
         Node<T> currNode = nodes.top();
         while(!nodes.empty())
         {
             vector<Node<T> > currNodeSuccessors = currNode.getSuccessors();
             if(currNodeSuccessors.size() == 0)
             {
-                if(!currNode.isVisited())
+                if(visited[currNode.getVal().id - 1])
                 {
-                    sortedNodes.push_back(currNode);
-                    currNode.visit();
+                    if(sortedNodes.size() == Nodes.size()) break;
+                    i++;
+                    nodes.push(*i);
                 }
-                else i++;
+                else
+                {
+                    visited[currNode.getVal().id - 1] = true;
+                    nodes.push(currNode);
+                    sortedNodes.push_back(currNode);
+                }
             }
             else
             {
-                for(int i = 0; i < currNodeSuccessors.size(); i++)
+                for(int k = 0; k < currNodeSuccessors.size(); k++)
                 {
-                    if(currNodeSuccessors[i].isVisited()) continue;
-                    nodes.push(currNodeSuccessors[i]);
-                    sortedNodes.push_back(currNodeSuccessors[i]);
-                    currNodeSuccessors[i].visit();
+                    if(visited[currNodeSuccessors[k].getVal().id - 1]) continue;
+                    nodes.push(currNodeSuccessors[k]);
+                    sortedNodes.push_back(currNodeSuccessors[k]);
+                    visited[currNodeSuccessors[k].getVal().id - 1] = true;
                 }
             }
 
-            nodes.pop();
             if(!nodes.empty())
                 currNode = nodes.top();
+
+            nodes.pop();
         }
 
         return sortedNodes;
-    }
-
-    void unvisitNodes()
-    {
-        typename vector<Node<T> >::iterator i;
-        for(i = Nodes.begin(); i != Nodes.end(); ++i)
-        {
-            i->unvisit();
-        }
     }
 
 public:
@@ -109,13 +113,94 @@ public:
 
     void addNode(Node<T>& node)
     {
-        ConnectNode(node);
+        if(!empty()) ConnectNode(node);
         Nodes.push_back(node);
-        unvisitNodes();
     }
 
-    vector<Node<T> >& topologicalSort()
+    vector<Node<T> > topologicalSort()
     {
         return topologicalSortUtil();
+    }
+
+    vector<Node<T> >& getNodes()
+    {
+        return Nodes;
+    }
+
+    vector<Course> findBy(int course, vector<int> passedCourses, bool onlyChoosable = false)
+    {
+        vector<Course> availableCourses;
+        stack<Node<T> > nodes;
+        bool * visited = new bool[Nodes.size()];
+        typename vector<Node<T> >::iterator i = Nodes.begin();
+        nodes.push(*i);
+        visited[i->getVal().id - 1] = true;
+        Node<T> currCourse = nodes.top();
+        int cnt = 1;
+        while(!nodes.empty() && cnt < Nodes.size())
+        {
+            cnt++;
+            currCourse.getVal().printCourse();
+            if(currCourse.getVal().course == course &&
+               contains(currCourse.getVal().takenCourses, passedCourses))
+            {
+                if(onlyChoosable)
+                {
+                    if(!currCourse.getVal().mandatory)
+                        availableCourses.push_back(currCourse.getVal());
+                }
+                else
+                {
+                    availableCourses.push_back(currCourse.getVal());
+                }
+            }
+
+            vector<Node<T> > currNodeSuccessors = currCourse.getSuccessors();
+            if(currNodeSuccessors.size() == 0)
+            {
+                if(visited[currCourse.getVal().id - 1])
+                {
+                    i++;
+                    nodes.push(*i);
+                }
+                else
+                {
+                    visited[currCourse.getVal().id - 1] = true;
+                    nodes.push(currCourse);
+                }
+            }
+            else
+            {
+                for(int k = 0; k < currNodeSuccessors.size(); k++)
+                {
+                    if(visited[currNodeSuccessors[k].getVal().id - 1]) continue;
+                    nodes.push(currNodeSuccessors[k]);
+                    visited[currNodeSuccessors[k].getVal().id - 1] = true;
+                }
+            }
+
+            if(!nodes.empty())
+                currCourse = nodes.top();
+
+            nodes.pop();
+        }
+
+        return availableCourses;
+    }
+
+    void printGraph()
+    {
+        typename vector<Node<T> >::iterator i;
+        typename vector<Node<T> >::iterator k;
+        for(i = Nodes.begin(); i != Nodes.end(); ++i)
+        {
+            cout << i->getVal().id << " - ";
+            for(k = i->getSuccessors().begin(); k != i->getSuccessors().end(); k++)
+            {
+                cout << k->getVal().id << ", ";
+            }
+
+            cout << std::endl;
+        }
     }
 };

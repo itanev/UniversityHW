@@ -1,3 +1,4 @@
 1	UP	z|I, IS, SI, KN, PM|1|3|0
-2	UP	z|I, IS, SI, KN, PM|1|3|1
-2	UP	z|I, IS, SI, KN, PM|1|3|0
+2	SDP	z|I, IS, SI, KN, PM|2|3|1
+3	UPA	i|I, IS, SI, KN, PM|1|3|0
+4	graphs	i|I, IS, SI, KN, PM|3|3|1, 2
